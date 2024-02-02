@@ -1,38 +1,29 @@
 import operator
-from ast import literal_eval
+
+#["2","1","+","3","*"]
+#((2 + 1) * 3) = 9
+
 class Solution:
-    
-    OPERATORS = {"+":operator.add, "-":operator.sub, "*":operator.mul, "/":operator.truediv}
-
+    OPERATORS = {"+":operator.add, "-":operator.sub, "*": operator.mul, "/":operator.truediv}
     def evalRPN(self, tokens: list[str]) -> int:
+        opcontainer = []
+        for i in tokens: 
+            if i in self.OPERATORS:
+                result = self.binOp(*opcontainer[-2:], i)
+                opcontainer[-2:] = []
+                opcontainer.append(result)
+            else:
+                opcontainer.append(i)
+        return opcontainer[0]
 
-        operands = []
-        currentResult = None
-        for i in tokens:
-            if i not in self.OPERATORS:
-                operands.append(i)
-                
-            else: 
-                
-                if currentResult != None: 
-                    operands.append(currentResult)
-                    
-                currentResult = self.binOp(*operands,i)
-                operands.clear()
+    def binOp(self,x,y,op):
+        return self.OPERATORS[op](int(x),int(y))  
 
-        return currentResult
-        
-    def binOp(self, x, y, op):
-        return self.OPERATORS[op](int(x),int(y))
+tokens = (["2","1","+","3","*"], ["4","13","5","/","+"], ["10","6","9","3","+","-11","*","/","*","17","+","5","+"])
+sol = Solution()
+for token in tokens:
+    print(sol.evalRPN(token))
 
 
-        
-calc = Solution()
-tokens1 = ["2","1","+","3","*"]
-tokens2 = ["4","13","5","/","+"]
-tokens3 = ["10","6","9","3","+","-11","*","/","*","17","+","5","+"]
-print(f"La solucion para los tokens {tokens1} es {calc.evalRPN(tokens1)}")
-
-#print(type(operator.add(3,2)))
 
 
